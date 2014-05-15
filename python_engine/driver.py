@@ -2,6 +2,8 @@
 import maze
 import subprocess
 import itertools
+import time
+from sys import argv
 
 # DEFINE THE ARCHITECT AND SOLVER HERE
 # Architect is a program which takes input via stdin (as spec'd in readme) and outputs a maze string
@@ -17,10 +19,16 @@ solvers = {
 	}
 }
 
+################################
+### CHANGE MATCH OPTIONS HERE ##
+################################
+
 SIZE = 20
-SEED = 42
-VERBOSE = True
 STEP_LIMIT = SIZE*SIZE*SIZE
+SEED = 42
+VERBOSE = "-v" in argv
+ANIMATE = "-a" in argv
+SHOW_FOG = "-f" in argv # meaningless if ANIMATE is False
 
 ########################################################
 #### everything below this line is not customizable ####
@@ -75,6 +83,10 @@ with open('stats.txt', 'w') as f:
 				if decision in m.options():
 					m.move_to(decision)
 				elif VERBOSE: print "Solver tried to cheat!" # not an exception.. already limited by STEP_LIMIT
+
+				if ANIMATE:
+					print m.ascii_str(fog=SHOW_FOG)
+					time.sleep(0.08)
 			else: # 'nobreak' clause of for loop
 				if VERBOSE: print "Solver could not finish the maze in %d steps" % steps
 			score = maze_score(m, steps)
